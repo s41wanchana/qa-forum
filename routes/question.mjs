@@ -202,7 +202,13 @@ questionRouter.put("/:id", async (req, res) => {
 questionRouter.delete("/:id", async (req, res) => {
   const questionId = req.params.id;
   let result;
+
   try {
+    result = await connectionPool.query(
+      `DELETE from answers where question_id=$1`,
+      [questionId]
+    );
+
     result = await connectionPool.query(`DELETE from questions where id=$1`, [
       questionId,
     ]);
@@ -223,4 +229,5 @@ questionRouter.delete("/:id", async (req, res) => {
     message: "Successfully deleted the question.",
   });
 });
+
 export default questionRouter;
