@@ -36,8 +36,19 @@ questionRouter.post("/", async (req, res) => {
 
 questionRouter.get("/", async (req, res) => {
   let result;
+  const title = req.query.title;
+  const category = req.query.category;
   try {
-    result = await connectionPool.query(`select * from questions`);
+    result = await connectionPool.query(
+      `
+      select * from questions
+      where 
+        (title = $1 or $1 is null or $1 = '')
+        and
+        (category = $2 or $2 is null or $2 = '')
+      `,
+      [title, category]
+    );
   } catch (error) {
     return res.status(400).json({
       message: "Could not find server",
